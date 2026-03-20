@@ -1,0 +1,14 @@
+services:
+  yubal:
+    image: ghcr.io/guillevc/yubal:latest
+    container_name: yubal
+    restart: unless-stopped
+    ports:
+      - "9001:8000"
+    environment:
+      - TZ=America/Toronto # Set your timezone
+    volumes:
+      - /mnt/skyhawk/data/music:/app/data  # <--- Changed this line
+      - ./beets:/app/beets
+      - ./ytdlp:/app/ytdlp
+      - ./config:/app/config

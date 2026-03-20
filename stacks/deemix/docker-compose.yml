@@ -1,0 +1,10 @@
+services:
+  deemix:
+    image: ghcr.io/bambanah/deemix:latest
+    container_name: deemix
+    volumes:
+      - /home/gopi/music-tools/deemix/config:/config
+      - /mnt/skyhawk/data/music:/downloads
+    ports:
+      - 6595:6595
+    restart: unless-stopped

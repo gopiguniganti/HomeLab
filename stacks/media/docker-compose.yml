@@ -1,0 +1,332 @@
+# Compose file for the *arr stack with NordVPN - Compatible with docker-compose 1.29.2
+networks:
+  servarrnetwork:
+    name: servarrnetwork
+    ipam:
+      config:
+        - subnet: 172.39.0.0/24
+
+services:
+  # Gluetun VPN with NordVPN
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.2
+    ports:
+      - 8000:8000
+      - 8080:8080  # qbittorrent web interface
+      - 6881:6881  # qbittorrent torrent port
+      - 6789:6789  # nzbget
+      - 9696:9696  # prowlarr
+    volumes:
+      - ./gluetun:/gluetun
+    env_file:
+      - .env
+    environment:
+      - HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH=/gluetun/auth/config.toml
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    labels:
+      - "homepage.group=Media"
+      - "homepage.name=Gluetun VPN"
+      - "homepage.icon=gluetun.svg"
+      - "homepage.description=NordVPN Tunnel Status"
+
+  # Torrent client
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8080
+    volumes:
+      - ./qbittorrent:/config
+      - /mnt/skyhawk/data:/data
+    depends_on:
+      - gluetun
+    network_mode: service:gluetun
+    healthcheck:
+      test: ping -c 1 www.google.com || exit 1
+      interval: 60s
+      retries: 3
+      start_period: 20s
+      timeout: 10s
+
+  # Health monitor for qbittorrent
+  deunhealth:
+    image: qmcgaw/deunhealth
+    container_name: deunhealth
+    network_mode: "none"
+    environment:
+      - LOG_LEVEL=info
+      - HEALTH_SERVER_ADDRESS=127.0.0.1:9999
+      - TZ=${TZ}
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # Usenet client
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:latest
+    container_name: nzbget
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./nzbget:/config
+      - /mnt/skyhawk/data:/data
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    network_mode: service:gluetun
+    labels:
+      - "homepage.group=Downloads"
+      - "homepage.name=NZBGet"
+      - "homepage.icon=nzbget.svg"
+      - "homepage.href=http://192.168.2.125:6789"
+
+  # Indexer manager
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./prowlarr:/config
+    restart: unless-stopped
+    depends_on:
+      - gluetun
+    network_mode: service:gluetun
+    labels:
+      - "homepage.group=Media Management"
+      - "homepage.name=Prowlarr"
+      - "homepage.icon=prowlarr.svg"
+      - "homepage.href=http://192.168.2.125:9696"
+
+  # TV shows manager
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./sonarr:/config
+      - /mnt/skyhawk/data:/data
+    ports:
+      - 8989:8989
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.3
+    labels:
+      - "homepage.group=Media Management"
+      - "homepage.name=Sonarr"
+      - "homepage.icon=sonarr.svg"
+      - "homepage.href=http://192.168.2.125:8989"
+      - "homepage.widget.type=sonarr"
+      - "homepage.widget.url=http://192.168.2.125:8989"
+      - "homepage.widget.key=6cbe050bbd3f4a52b8a0aabd1d4319c9"
+
+  # Movies manager
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./radarr:/config
+      - /mnt/skyhawk/data:/data
+    ports:
+      - 7878:7878
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.4
+    labels:
+      - "homepage.group=Media Management"
+      - "homepage.name=Radarr"
+      - "homepage.icon=radarr.svg"
+      - "homepage.href=http://192.168.2.125:7878"
+      - "homepage.widget.type=radarr"
+      - "homepage.widget.url=http://192.168.2.125:7878"
+      - "homepage.widget.key=94a302c1d7fd45f78fcacea6383a63d6"
+
+  # Music manager
+  lidarr:
+    container_name: lidarr
+    image: lscr.io/linuxserver/lidarr:latest
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./lidarr:/config
+      - /mnt/skyhawk/data:/data
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 8686:8686
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.5
+    labels:
+      - "homepage.group=Media Management"
+      - "homepage.name=Lidarr"
+      - "homepage.icon=lidarr.svg"
+      - "homepage.href=http://192.168.2.125:8686"
+
+  # Subtitles manager
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./bazarr:/config
+      - /mnt/skyhawk/data:/data
+    ports:
+      - 6767:6767
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.6
+    labels:
+      - "homepage.group=Media Management"
+      - "homepage.name=Bazarr"
+      - "homepage.icon=bazarr.svg"
+      - "homepage.href=http://192.168.2.125:6767"
+
+  # Media server
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [video, utility]
+    volumes:
+      - ./jellyfin:/config
+      - /mnt/skyhawk/data:/data
+    ports:
+      - 8096:8096
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.10
+    restart: unless-stopped
+    labels:
+      - "homepage.group=Media"
+      - "homepage.name=Jellyfin"
+      - "homepage.icon=jellyfin.svg"
+      - "homepage.href=http://192.168.2.125:8096"
+      - "homepage.widget.type=jellyfin"
+      - "homepage.widget.url=http://172.39.0.10:8096"
+      - "homepage.widget.key=e13546f27064433598120a3b21b26310"
+      - "homepage.widget.enableBlocks=true"           
+      - "homepage.widget.enableNowPlaying=true"       
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - LOG_LEVEL=info
+    volumes:
+      - ./jellyseerr:/app/config
+    ports:
+      - 5055:5055
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.11
+    labels:
+      - "homepage.group=Media"
+      - "homepage.name=Jellyseerr"
+      - "homepage.icon=jellyseerr.svg"
+      - "homepage.href=http://192.168.2.125:5055"
+
+  # Cloudflare Bypass for Indexers
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - LOG_LEVEL=info
+      - CAPTCHA_MAX_TIMEOUT=120000
+      - MAX_PARALLEL_SESSIONS=1
+    volumes:
+      - ./flaresolverr:/config
+    network_mode: service:gluetun
+
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr:latest
+    container_name: recyclarr
+    user: "${PUID}:${PGID}"
+    volumes:
+      - ./recyclarr:/config
+    environment:
+      - TZ=${TZ}
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.12
+    restart: unless-stopped
+
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+    volumes:
+      - ./config/nginx:/data
+      - ./config/nginx/letsencrypt:/etc/letsencrypt
+    networks:
+      servarrnetwork:
+        ipv4_address: 172.39.0.20
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    labels:
+      - "homepage.group=Infrastructure"
+      - "homepage.name=Nginx Proxy Manager"
+      - "homepage.icon=nginx-proxy-manager.svg"
+      - "homepage.href=http://192.168.2.125:81"

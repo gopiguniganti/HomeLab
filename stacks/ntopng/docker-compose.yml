@@ -1,0 +1,26 @@
+services:
+  redis:
+    image: redis:alpine
+    container_name: ntopng-redis
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    command: redis-server --save 60 1
+
+  ntopng:
+    image: ntop/ntopng:latest
+    container_name: ntopng
+    depends_on:
+      - redis
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ntopng-data:/var/lib/ntopng
+    command: --community -i eno1 -r 127.0.0.1:6379@0 -w 0.0.0.0:3001 -d /var/lib/ntopng
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  ntopng-data:
