@@ -1,10 +1,20 @@
 # 🖥️ HomeLab
 
-A self-hosted infrastructure stack running on an HP ProDesk mini PC, managing Docker-based services for media, productivity, AI, monitoring, and networking — all behind a reverse proxy with VPN routing.
+A polished collection of self-hosted Docker stacks for media, automation, productivity, monitoring, and networking — running on an HP ProDesk mini PC and documented for easy reuse.
 
 ---
 
-## 🏗️ Hardware
+## ✨ What this repo is
+
+This repository is a practical HomeLab archive and reference project. It includes:
+
+- exported Docker Compose snapshots for the services running on the host
+- a simple overview of the stack categories and architecture
+- helper scripts and templates to make the setup easier to manage
+
+---
+
+## 🏗️ Environment
 
 - Host: HP ProDesk Mini PC
 - OS: Ubuntu Server
@@ -14,97 +24,74 @@ A self-hosted infrastructure stack running on an HP ProDesk mini PC, managing Do
 
 ---
 
-## 📦 Stack Overview
+## 📦 Stack highlights
 
-### 🎬 Media Server
+### Media
+- Jellyfin
+- Sonarr
+- Radarr
+- Lidarr
+- Bazarr
+- Prowlarr
+- qBittorrent
+- NZBGet
+- FlareSolverr
+- Recyclarr
+- Gluetun
 
-This stack covers the self-hosted media automation pipeline from indexing to playback.
+### AI & automation
+- Open WebUI
+- SearXNG
+- n8n
 
-- Jellyfin — media server and streaming
-- Sonarr — TV show management
-- Radarr — movie management
-- Lidarr — music management
-- Bazarr — subtitle management
-- Prowlarr — indexer manager
-- qBittorrent — torrent client (via VPN)
-- NZBGet — Usenet client (via VPN)
-- FlareSolverr — Cloudflare bypass
-- Recyclarr — quality profile sync
-- Gluetun — VPN gateway container
+### Productivity
+- Immich
+- Paperless-ngx
+- Actual Budget
+- FreshRSS
+- FileBrowser
+- BentoPDF
 
-### 🧠 AI & Search
+### Monitoring & networking
+- Scrutiny
+- ntopng
+- Speedtest Tracker
+- Deunhealth
+- Nginx Proxy Manager
+- Glance
+- Gotify
+- Arcane
 
-- Open WebUI — local LLM interface
-- SearXNG — private meta search engine
-- n8n — workflow automation
-
-### 📸 Productivity & Documents
-
-- Immich — self-hosted photo backup and gallery
-- Paperless-ngx — document management and OCR
-- Actual Budget — personal finance tracking
-- FreshRSS — RSS feed aggregator
-- FileBrowser — web-based file manager
-- BentoPDF — PDF tools
-
-### 📊 Monitoring & Observability
-
-- Scrutiny — S.M.A.R.T. disk health monitoring
-- ntopng — network traffic analysis
-- Speedtest Tracker — ISP speed monitoring
-- Deunhealth — unhealthy container auto-restart
-
-### 🌐 Network & Dashboard
-
-- Nginx Proxy Manager — reverse proxy and SSL termination
-- Glance — self-hosted dashboard
-- Gotify — push notification server
-- Arcane — Arr suite UI manager
-
-### 💪 Fitness
-
-- SparkyFitness — self-hosted fitness and nutrition tracker
+### Fitness
+- SparkyFitness
 
 ---
 
-## 🗂️ Repository Structure
+## 🗂️ Repository structure
 
 ```text
 HomeLab/
-├── stacks/              # Exported Docker Compose snapshots
-│   ├── arcane/
-│   ├── freshrss/
-│   ├── glance/
-│   ├── immich-app/
-│   ├── media/
-│   ├── ntopng/
-│   ├── paperless/
-│   ├── sparkyfitness/
-│   ├── speedtest/
-│   └── yubal-app/
-└── README.md            # Project overview
+├── docs/                 # architecture and stack notes
+├── scripts/              # helper utilities
+├── stacks/               # exported Docker Compose snapshots
+├── templates/            # environment templates
+├── README.md
+└── .gitignore
 ```
-
-Each stack folder contains a compose file that can be used to recreate or review the deployment.
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Docker and Docker Compose installed
-- A domain name for reverse proxy SSL
-- VPN provider credentials for Gluetun
-
-### Clone and run
+## 🚀 Getting started
 
 ```bash
 git clone https://github.com/gopiguniganti/HomeLab.git
 cd HomeLab
+cp templates/env.example .env
+chmod +x scripts/stack-status.sh
+./scripts/stack-status.sh
 ```
 
-To bring up a stack:
+To inspect or replay a stack:
 
 ```bash
 cd stacks/media
@@ -113,15 +100,14 @@ docker compose up -d
 
 ---
 
-## 🔒 Security Notes
+## 🔒 Security notes
 
-- Services are intended to run behind Nginx Proxy Manager with SSL.
-- Download clients such as qBittorrent and NZBGet are routed through Gluetun.
-- Avoid committing secrets; keep sensitive values in local environment files or secrets management.
-- This repository currently focuses on compose definitions and stack snapshots.
+- Keep secrets out of the repository.
+- Use local environment files or secret stores for credentials.
+- The compose snapshots are meant for reference and recovery, not as a replacement for proper secret management.
 
 ---
 
 ## 📝 License
 
-MIT — feel free to use and adapt for your own homelab.
+MIT — feel free to use and adapt for your own HomeLab.
