@@ -1,32 +1,19 @@
-# 🖥️ HomeLab
+# HomeLab
 
-A polished collection of self-hosted Docker stacks for media, automation, productivity, monitoring, and networking — running on an HP ProDesk mini PC and documented for easy reuse.
+A self-hosted infrastructure repo for the Docker services running on my HP ProDesk mini PC. It includes stack snapshots, setup notes, and a small set of helper scripts so the environment is easier to understand and reproduce.
 
----
+## What this repo contains
 
-## ✨ What this repo is
+This repository is a practical home lab archive with:
 
-This repository is a practical HomeLab archive and reference project. It includes:
+- exported Docker Compose snapshots for the services I actually run
+- a service catalog and architecture notes
+- helper scripts for checking the local stack state
+- a simple structure for keeping the setup documented and maintainable
 
-- exported Docker Compose snapshots for the services running on the host
-- a simple overview of the stack categories and architecture
-- helper scripts and templates to make the setup easier to manage
+## Core stack
 
----
-
-## 🏗️ Environment
-
-- Host: HP ProDesk Mini PC
-- OS: Ubuntu Server
-- Orchestration: Docker + Docker Compose
-- Reverse Proxy: Nginx Proxy Manager
-- VPN: Gluetun
-
----
-
-## 📦 Stack highlights
-
-### Media
+### Media and automation
 - Jellyfin
 - Sonarr
 - Radarr
@@ -39,75 +26,74 @@ This repository is a practical HomeLab archive and reference project. It include
 - Recyclarr
 - Gluetun
 
-### AI & automation
+### Productivity and utilities
+- Immich
+- Paperless-ngx
+- FreshRSS
+- FileBrowser
+- Actual Budget
+- BentoPDF
+
+### AI and workflows
 - Open WebUI
 - SearXNG
 - n8n
 
-### Productivity
-- Immich
-- Paperless-ngx
-- Actual Budget
-- FreshRSS
-- FileBrowser
-- BentoPDF
-
-### Monitoring & networking
-- Scrutiny
-- ntopng
-- Speedtest Tracker
-- Deunhealth
+### Monitoring and networking
 - Nginx Proxy Manager
 - Glance
 - Gotify
 - Arcane
+- Scrutiny
+- ntopng
+- Speedtest Tracker
+- Deunhealth
 
 ### Fitness
 - SparkyFitness
 
----
+## Hardware and platform
 
-## 🗂️ Repository structure
+- Host: HP ProDesk mini PC
+- OS: Ubuntu Server
+- Orchestration: Docker Compose
+- Reverse proxy: Nginx Proxy Manager
+- VPN: Gluetun
+
+## Repository layout
 
 ```text
 HomeLab/
-├── docs/                 # architecture and stack notes
-├── scripts/              # helper utilities
-├── stacks/               # exported Docker Compose snapshots
+├── docs/                 # architecture, hardware, and service documentation
+├── scripts/              # helper scripts
+├── stacks/               # exported compose snapshots
 ├── templates/            # environment templates
 ├── README.md
 └── .gitignore
 ```
 
----
-
-## 🚀 Getting started
+## Getting started
 
 ```bash
 git clone https://github.com/gopiguniganti/HomeLab.git
 cd HomeLab
-cp templates/env.example .env
 chmod +x scripts/stack-status.sh
 ./scripts/stack-status.sh
 ```
 
-To inspect or replay a stack:
+To inspect or replay a specific stack:
 
 ```bash
 cd stacks/media
 docker compose up -d
 ```
 
----
+## Security notes
 
-## 🔒 Security notes
-
-- Keep secrets out of the repository.
+- Keep secrets out of version control.
 - Use local environment files or secret stores for credentials.
-- The compose snapshots are meant for reference and recovery, not as a replacement for proper secret management.
+- The compose snapshots are intended for reference and recovery, not as a replacement for secret management.
 
----
+## Notes
 
-## 📝 License
-
-MIT — feel free to use and adapt for your own HomeLab.
+This repo is meant to be a clean, useful record of the self-hosted stack I run day to day. It focuses on the services that are actually hosted here, rather than a generic or overly broad setup.
