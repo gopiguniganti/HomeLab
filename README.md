@@ -48,9 +48,16 @@ This repository is a practical home lab archive with:
 - ntopng
 - Speedtest Tracker
 - Deunhealth
+- Pi-hole (on a separate host, used for DNS filtering and ad blocking)
 
 ### Fitness
 - SparkyFitness
+
+## Dashboard and control plane
+
+- Glance provides a lightweight dashboard for quick access to the most important services.
+- Nginx Proxy Manager handles reverse proxying and local service exposure.
+- Pi-hole, while hosted on a separate machine, is part of the overall network layer and is documented here for context.
 
 ## Hardware and platform
 
