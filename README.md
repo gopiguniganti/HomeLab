@@ -2,6 +2,25 @@
 
 A self-hosted infrastructure repo for the Docker services running on my HP ProDesk mini PC. It includes stack snapshots, setup notes, and a small set of helper scripts so the environment is easier to understand and reproduce.
 
+## Hardware snapshot
+
+| Item | Details |
+| --- | --- |
+| Host | HP ProDesk mini PC |
+| OS | Ubuntu Server |
+| Runtime | Docker Compose |
+| Networking | Nginx Proxy Manager and Pi-hole |
+| VPN | Gluetun |
+| Primary role | Media, automation, dashboards, and monitoring |
+
+## Currently running services
+
+- Media and downloads: Jellyfin, Sonarr, Radarr, Lidarr, Bazarr, Prowlarr, qBittorrent, NZBGet, FlareSolverr, Recyclarr, Gluetun
+- Productivity and self-hosted apps: Immich, Paperless-ngx, FreshRSS, FileBrowser, Actual Budget, BentoPDF
+- AI and automation: Open WebUI, SearXNG, n8n
+- Operations and visibility: Glance, Nginx Proxy Manager, Gotify, Arcane, Scrutiny, ntopng, Speedtest Tracker, Deunhealth
+- Fitness: SparkyFitness
+
 ## What this repo contains
 
 This repository is a practical home lab archive with:
