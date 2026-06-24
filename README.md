@@ -1,6 +1,6 @@
 # HomeLab
 
-A self-hosted infrastructure repo for the Docker services running on my HP ProDesk mini PC. It includes stack snapshots, setup notes, and a small set of helper scripts so the environment is easier to understand and reproduce.
+A self-hosted infrastructure repo for the Docker services running on my HP ProDesk mini PC. It includes stack snapshots, setup notes, and helper scripts so the environment is easier to understand and reproduce.
 
 ## Hardware snapshot
 
@@ -26,7 +26,7 @@ A self-hosted infrastructure repo for the Docker services running on my HP ProDe
 This repository is a practical home lab archive with:
 
 - exported Docker Compose snapshots for the services I actually run
-- a service catalog and architecture notes
+- service catalog and architecture notes
 - helper scripts for checking the local stack state
 - a simple structure for keeping the setup documented and maintainable
 
@@ -76,19 +76,11 @@ This repository is a practical home lab archive with:
 
 - Glance provides a lightweight dashboard for quick access to the most important services.
 - Nginx Proxy Manager handles reverse proxying and local service exposure.
-- Pi-hole, while hosted on a separate machine, is part of the overall network layer and is documented here for context.
+- Pi-hole, hosted separately, is part of the overall network layer and is documented here for context.
 
 ### Glance dashboard
 
 ![Glance dashboard](docs/assets/glance-dashboard.png)
-
-## Hardware and platform
-
-- Host: HP ProDesk mini PC
-- OS: Ubuntu Server
-- Orchestration: Docker Compose
-- Reverse proxy: Nginx Proxy Manager
-- VPN: Gluetun
 
 ## Repository layout
 
