@@ -78,6 +78,10 @@ This repository is a practical home lab archive with:
 - Nginx Proxy Manager handles reverse proxying and local service exposure.
 - Pi-hole, while hosted on a separate machine, is part of the overall network layer and is documented here for context.
 
+### Glance dashboard
+
+![Glance dashboard](docs/assets/glance-dashboard.png)
+
 ## Hardware and platform
 
 - Host: HP ProDesk mini PC
