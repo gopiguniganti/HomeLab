@@ -2,7 +2,7 @@
 
 A self-hosted infrastructure repo for the Docker services running on my HP ProDesk mini PC. It includes stack snapshots, setup notes, and helper scripts so the environment is easier to understand and reproduce.
 
-### dashboard
+### Dashboard
 
 ![Glance dashboard](docs/assets/glance-dashboard.png)
 
