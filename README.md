@@ -2,6 +2,10 @@
 
 A self-hosted infrastructure repo for the Docker services running on my HP ProDesk mini PC. It includes stack snapshots, setup notes, and helper scripts so the environment is easier to understand and reproduce.
 
+### dashboard
+
+![Glance dashboard](docs/assets/glance-dashboard.png)
+
 ## Hardware snapshot
 
 | Item | Details |
@@ -78,9 +82,6 @@ This repository is a practical home lab archive with:
 - Nginx Proxy Manager handles reverse proxying and local service exposure.
 - Pi-hole, hosted separately, is part of the overall network layer and is documented here for context.
 
-### Glance dashboard
-
-![Glance dashboard](docs/assets/glance-dashboard.png)
 
 ## Repository layout
 
